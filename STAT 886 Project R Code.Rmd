@@ -1,0 +1,25 @@
+---
+title: "STAT 886 Project R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+```{r summary, echo=TRUE}
+cars <- read.csv("auto-mpg-clean.csv")
+summary(cars)
+
+accel2 <- cars %>% mutate(accel2 = acceleration^2)
+```
+
+```{r, ols models, echo=TRUE}
+model_all_linear <- lm(data=cars, mpg ~ cylinders + displacement + horsepower + weight + acceleration + origin)
+summary(model_all_linear)
+
+
+model_quad_accel <- lm(data=accel2, mpg ~ cylinders + displacement + horsepower + weight  + accel2 + origin)
+summary(model_quad_accel)
+```
