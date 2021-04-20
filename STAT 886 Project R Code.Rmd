@@ -15,6 +15,22 @@ summary(cars)
 accel2 <- cars %>% mutate(accel2 = acceleration^2)
 ```
 
+```{r, plots}
+ggplot(data = cars, aes(x=acceleration, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=origin, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=model.year, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=weight, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=cylinders, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=displacement, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=horsepower, y=mpg)) + geom_point() 
+```
+
 ```{r, ols models, echo=TRUE}
 model_all_linear <- lm(data=cars, mpg ~ cylinders + displacement + horsepower + weight + acceleration + origin)
 summary(model_all_linear)
