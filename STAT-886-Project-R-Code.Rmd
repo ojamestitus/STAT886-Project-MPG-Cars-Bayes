@@ -9,6 +9,7 @@ library(tidyverse)
 library(MASS)
 library(R2OpenBUGS)
 library(brms)
+library(StanHeaders)
 ```
 
 ```{r summary, echo=TRUE}
@@ -263,10 +264,10 @@ plot(density(b6),lwd=2,col="red")
 
 ### Check results using brms
 ```{r, echo=TRUE}
-best <- brm(data=cars, log(mpg) ~ horsepower + model.year + origin)
-summary(best)
+#best <- brm(data=cars, log(mpg) ~ horsepower + model.year + origin)
+#summary(best)
 
-summary(best)
+#summary(best)
 
-plot(best)
+#plot(best)
 ```
