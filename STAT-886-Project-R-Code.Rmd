@@ -1,0 +1,101 @@
+---
+title: "STAT 886 Project R"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(R2OpenBUGS)
+```
+
+```{r summary, echo=TRUE}
+cars <- read.csv("auto-mpg-clean.csv")
+summary(cars)
+
+accel2 <- cars %>% mutate(accel2 = acceleration^2)
+```
+
+## Graphs
+```{r, plots}
+ggplot(data = cars, aes(x=acceleration, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=origin, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=model.year, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=weight, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=cylinders, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=displacement, y=mpg)) + geom_point() 
+
+ggplot(data = cars, aes(x=horsepower, y=mpg)) + geom_point() 
+```
+
+## Frequentist models
+
+```{r, ols models, echo=TRUE}
+model_all_linear <- lm(data=cars, mpg ~ cylinders + displacement + horsepower + weight + acceleration + origin + model.year)
+summary(model_all_linear)
+
+
+model_quad_accel <- lm(data=accel2, mpg ~ cylinders + displacement + horsepower + weight  + accel2 + origin)
+summary(model_quad_accel)
+```
+
+## Linear model of best fit
+```{r, stepwise, echo=TRUE}
+stepAIC(model_all_linear)
+```
+
+## WinBUGS
+
+### All terms
+```{r, echo=TRUE}
+N <- 392
+
+
+model <- function() {
+for(i in 1:N){
+mpg[i] ~ dnorm(mu[i], tau)
+mu[i] <- alpha + beta1*cylinders[i] + beta2*weight[i] + beta3*displacement[i] + beta4*model.year[i] + beta5*horsepower[i] + beta6*origin[i] + beta7*acceleration[i]
+}
+# priors
+alpha ~ dnorm(0, .001)
+beta1 ~ dunif(-1000,1000)
+beta2 ~ dunif(-1000,1000)
+beta3 ~ dunif(-1000,1000)
+beta4 ~ dunif(-1000,1000)
+beta5 ~ dunif(-1000, 1000)
+beta6 ~ dunif(-1000, 1000)
+beta7 ~ dunif(-1000, 1000)
+tau ~ dgamma(0.5,0.5)
+}
+
+data <- list(mpg=cars$mpg, cylinders=cars$cylinders, weight=cars$weight, model.year=cars$model.year, origin = cars$origin, horsepower=cars$horsepower, acceleration = cars$acceleration, displacement=cars$displacement, N=N)
+
+inits <- function(){
+list(alpha=rnorm(1), beta1=rnorm(1), beta2=rnorm(1), beta3 = rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), beta7 = rnorm(1), tau=runif(1,0,2))
+}
+
+parameters <- c("alpha", "beta1", "beta2", "beta3", "beta4", "beta5", "beta6", "beta7", "tau")
+
+
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta1", "beta2", "beta3", "beta4", "beta5", "beta6", "beta7", "tau"), model.file = model, n.chains=1, n.iter=2000)
+
+plot(sims, display.parallel = TRUE)
+
+b1 <- sims$sims.array[,,"beta1"]
+
+plot(b1, type='l', col="red")
+
+plot(density(b1),lwd=2,col="red")
+
+b2 <- sims$sims.array[,,"beta2"]
+
+plot(b2, type='l', col="red")
+
+plot(density(b2),lwd=2,col="red")
+```
