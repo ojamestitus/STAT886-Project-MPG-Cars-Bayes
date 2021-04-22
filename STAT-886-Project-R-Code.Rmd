@@ -17,7 +17,7 @@ cars <- read.csv("auto-mpg-clean.csv")
 cars_no_char <- read.csv("auto-mpg-clean-no-car.csv")
 summary(cars)
 
-accel2 <- cars %>% mutate(accel2 = acceleration^2)
+#accel2 <- cars %>% mutate(accel2 = acceleration^2)
 ```
 
 ## Graphs MPG vs Explanatory variables
@@ -68,11 +68,11 @@ res <- resid(horsepowermpg)
 ggplot(data = cars, aes(x=horsepower, y=res)) + geom_point() 
 
 
-horsepow2 <- cars %>% mutate(horsepow2 = horsepower^2)
+#horsepow2 <- cars %>% mutate(horsepow2 = horsepower^2)
 
-horsepower2mpg <- lm(data=horsepow2, mpg~horsepow2)
+#horsepower2mpg <- lm(data=horsepow2, mpg~horsepow2)
 
-summary(horsepower2mpg)
+#summary(horsepower2mpg)
 ```
 
 ## Linear model of best fit
@@ -264,10 +264,10 @@ plot(density(b6),lwd=2,col="red")
 
 ### Check results using brms
 ```{r, echo=TRUE}
-#best <- brm(data=cars, log(mpg) ~ horsepower + model.year + origin)
-#summary(best)
+best <- brm(data=cars, log(mpg) ~ horsepower + model.year + origin)
+summary(best)
 
-#summary(best)
+summary(best)
 
-#plot(best)
+plot(best)
 ```
