@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(MASS)
 library(R2OpenBUGS)
+library(rstan)
 library(brms)
 library(StanHeaders)
 ```
@@ -136,7 +137,7 @@ b3 <- sims$sims.array[,,"beta3"]
 
 plot(b3, type='l', col="red")
 
-plot(density(b6),lwd=2,col="red")
+plot(density(b3),lwd=2,col="red")
 
 b4 <- sims$sims.array[,,"beta4"]
 
@@ -214,6 +215,70 @@ plot(b6, type='l', col="red")
 plot(density(b6),lwd=2,col="red")
 
 ```
+#New priors from brms
+```{r, echo=TRUE}
+N <- 392
+
+model <- function() {
+for(i in 1:N){
+mpg[i] ~ dnorm(mu[i], tau)
+mu[i] <- alpha + beta4*model.year[i] + beta5*horsepower[i] + beta6*origin[i] 
+}
+# priors
+alpha ~ dt(22.8, 0.12, 3)
+beta4 ~ dunif(-1000,1000)
+beta5 ~ dunif(-1000, 1000)
+beta6 ~ dunif(-1000, 1000)
+tau ~ dt(0,0.12, 3)
+}
+
+logmpg <- log(cars$mpg)
+
+data <- list(mpg=logmpg, model.year=cars$model.year, origin = cars$origin, horsepower=cars$horsepower, N=N)
+
+inits <- function(){
+list(alpha=rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), tau=runif(1,0,2))
+}
+
+parameters <- c("alpha", "beta4", "beta5", "beta6","tau")
+
+
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta4", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=10000, n.burnin = 5000)
+
+
+plot(sims, display.parallel = TRUE)
+
+alpha <- sims$sims.array[,,"alpha"]
+
+plot(alpha, type='l', col="red")
+
+plot(density(alpha),lwd=2,col="red")
+
+b4 <- sims$sims.array[,,"beta4"]
+
+plot(b4, type='l', col="red")
+
+plot(density(b4),lwd=2,col="red")
+
+b5 <- sims$sims.array[,,"beta5"]
+
+plot(b5, type='l', col="red")
+
+plot(density(b5),lwd=2,col="red")
+
+b6 <- sims$sims.array[,,"beta6"]
+
+plot(b6, type='l', col="red")
+
+plot(density(b6),lwd=2,col="red")
+
+tau <- sims$sims.array[,,"tau"]
+
+plot(tau, type='l', col="red")
+
+plot(density(tau),lwd=2,col="red")
+
+```
 
 ### No model year
 
@@ -244,7 +309,7 @@ list(alpha=rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), tau=r
 parameters <- c("alpha", "beta5", "beta6","tau")
 
 
-sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=10000)
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=10000, n.burnin = 5000)
 
 plot(sims, display.parallel = TRUE)
 
@@ -264,10 +329,8 @@ plot(density(b6),lwd=2,col="red")
 
 ### Check results using brms
 ```{r, echo=TRUE}
-best <- brm(data=cars, log(mpg) ~ horsepower + model.year + origin)
+best <- brm(data=cars, mpg ~ horsepower + model.year + origin)
 summary(best)
-
-summary(best)
-
 plot(best)
+prior_summary(best)
 ```
