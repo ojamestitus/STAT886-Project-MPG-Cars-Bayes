@@ -21,19 +21,19 @@ summary(cars)
 
 ## Graphs MPG vs Explanatory variables
 ```{r, plots}
-ggplot(data = cars, aes(x=acceleration, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~acceleration))
+ggplot(data = cars, aes(x=mpg)) + geom_histogram()
 
-ggplot(data = cars, aes(x=origin, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~origin))
+ggplot(data = cars, aes(x=acceleration, y=mpg)) + geom_point(colour="cyan3") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~acceleration)) + ggtitle("MPG vs. Acceleration")
 
-ggplot(data = cars, aes(x=model.year, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~model.year))
+ggplot(data = cars, aes(x=model.year, y=mpg)) + geom_point(colour="red1") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~model.year)) + ggtitle("MPG vs. Model Year")
 
-ggplot(data = cars, aes(x=weight, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~weight))
+ggplot(data = cars, aes(x=weight, y=mpg)) + geom_point(colour="orange2") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~weight)) + ggtitle("MPG vs. Weight")
 
-ggplot(data = cars, aes(x=cylinders, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~cylinders))
+ggplot(data = cars, aes(x=cylinders, y=mpg)) + geom_point(colour="olivedrab") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~cylinders)) + ggtitle("MPG vs. Number of Cylinders")
 
-ggplot(data = cars, aes(x=displacement, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~weight))
+ggplot(data = cars, aes(x=displacement, y=mpg)) + geom_point(colour="purple1") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~weight)) + ggtitle("MPG vs. Engine Displacement")
 
-ggplot(data = cars, aes(x=horsepower, y=mpg)) + geom_point() + geom_smooth(methed = lm(data=cars, formula=log(mpg)~horsepower))
+ggplot(data = cars, aes(x=horsepower, y=mpg)) + geom_point(colour="yellow3") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~horsepower)) + ggtitle("MPG vs. Horsepower")
 ```
 
 
