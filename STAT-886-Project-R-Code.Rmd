@@ -133,58 +133,7 @@ plot(b7, type='l', col="red")
 
 plot(density(b7),lwd=2,col="red")
 ```
-### Final Model, concluded from common sense and correlation matrix, horsepower
 
-```{r, echo=TRUE}
-N <- 392
-
-model <- function() {
-for(i in 1:N){
-mpg[i] ~ dnorm(mu[i], tau)
-mu[i] <- alpha + beta4*model.year[i] + beta5*horsepower[i] + beta6*acceleration[i] 
-}
-# priors
-alpha ~ dnorm(0, .001)
-beta4 ~ dunif(-1000,1000)
-beta5 ~ dunif(-1000, 1000)
-beta6 ~ dunif(-1000, 1000)
-tau ~ dgamma(0.5,0.5)
-}
-
-logmpg <- log(cars$mpg)
-
-data <- list(mpg=logmpg, model.year=cars$model.year, horsepower = cars$horsepower, acceleration=cars$acceleration, N=N)
-
-inits <- function(){
-list(alpha=rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), tau=runif(1,0,2))
-}
-
-parameters <- c("alpha", "beta4", "beta5", "beta6","tau")
-
-
-sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta4", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
-
-plot(sims, display.parallel = TRUE)
-
-b4 <- sims$sims.array[,,"beta4"]
-
-plot(b4, type='l', col="red")
-
-plot(density(b4),lwd=2,col="red")
-
-b5 <- sims$sims.array[,,"beta5"]
-
-plot(b5, type='l', col="red")
-
-plot(density(b5),lwd=2,col="red")
-
-b6 <- sims$sims.array[,,"beta6"]
-
-plot(b6, type='l', col="red")
-
-plot(density(b6),lwd=2,col="red")
-
-```
 ## Weight
 ```{r, echo=TRUE}
 N <- 392
@@ -213,7 +162,9 @@ list(alpha=rnorm(1), beta1 = rnorm(1), beta2 = rnorm(1), beta3 = rnorm(1), tau=r
 parameters <- c("alpha", "beta1", "beta2", "beta3","tau")
 
 
-sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta1", "beta2", "beta3", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta1", "beta2", "beta3", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000, digits=5)
+
+print(sims, digits.summary = 5)
 
 alpha<- sims$sims.array[,,"alpha"]
 
@@ -254,13 +205,13 @@ N <- 392
 model <- function() {
 for(i in 1:N){
 mpg[i] ~ dnorm(mu[i], tau)
-mu[i] <- alpha + beta4*model.year[i] + beta5*displacement[i] + beta6*acceleration[i] 
+mu[i] <- alpha + beta1*model.year[i] + beta2*acceleration[i] + beta3*displacement[i] 
 }
 # priors
 alpha ~ dnorm(0, .001)
-beta4 ~ dunif(-1000,1000)
-beta5 ~ dunif(-1000, 1000)
-beta6 ~ dunif(-1000, 1000)
+beta1 ~ dunif(-1000,1000)
+beta2 ~ dunif(-1000, 1000)
+beta3 ~ dunif(-1000, 1000)
 tau ~ dgamma(0.5,0.5)
 }
 
@@ -269,37 +220,48 @@ logmpg <- log(cars$mpg)
 data <- list(mpg=logmpg, model.year=cars$model.year, displacement = cars$displacement, acceleration=cars$acceleration, N=N)
 
 inits <- function(){
-list(alpha=rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), tau=runif(1,0,2))
+list(alpha=rnorm(1), beta1 = rnorm(1), beta2 = rnorm(1), beta3 = rnorm(1), tau=runif(1,0,2))
 }
 
-parameters <- c("alpha", "beta4", "beta5", "beta6","tau")
+parameters <- c("alpha", "beta1", "beta2", "beta3","tau")
 
 
-sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta4", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta1", "beta2", "beta3", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
+alpha<- sims$sims.array[,,"alpha"]
 
-plot(sims, display.parallel = TRUE)
+print(sims, digits.summary = 5)
 
-b4 <- sims$sims.array[,,"beta4"]
+plot(alpha, type='l', col="red")
 
-plot(b4, type='l', col="red")
+plot(density(alpha), lwd=2, col="red")
 
-plot(density(b4),lwd=2,col="red")
+tau <- sims$sims.array[,,"tau"]
 
-b5 <- sims$sims.array[,,"beta5"]
+plot(tau, type='l', col="red")
 
-plot(b5, type='l', col="red")
+plot(density(tau), lwd=2, col="red")
 
-plot(density(b5),lwd=2,col="red")
+beta1 <- sims$sims.array[,,"beta1"]
 
-b6 <- sims$sims.array[,,"beta6"]
+plot(beta1, type='l', col="red")
 
-plot(b6, type='l', col="red")
+plot(density(beta1),lwd=2,col="red")
 
-plot(density(b6),lwd=2,col="red")
+beta2 <- sims$sims.array[,,"beta2"]
+
+plot(beta2, type='l', col="red")
+
+plot(density(beta2),lwd=2,col="red")
+
+beta3 <- sims$sims.array[,,"beta3"]
+
+plot(beta3, type='l', col="red")
+
+plot(density(beta3),lwd=2,col="red")
 
 ```
 
-### Final Model, concluded from common sense and correlation matrix, normals
+### horsepower
 
 ```{r, echo=TRUE}
 N <- 392
@@ -307,49 +269,58 @@ N <- 392
 model <- function() {
 for(i in 1:N){
 mpg[i] ~ dnorm(mu[i], tau)
-mu[i] <- alpha + beta4*model.year[i] + beta5*weight[i] + beta6*acceleration[i] 
+mu[i] <- alpha + beta1*model.year[i] + beta2*acceleration[i] + beta3*horsepower[i] 
 }
 # priors
 alpha ~ dnorm(0, .001)
-beta4 ~ dnorm(1,0.01)
-beta5 ~ dnorm(1, 0.01)
-beta6 ~ dnorm(1, 0.01)
+beta1 ~ dnorm(1,0.01)
+beta2 ~ dnorm(1, 0.01)
+beta3 ~ dnorm(1, 0.01)
 tau ~ dgamma(0.5,0.5)
 }
 
 logmpg <- log(cars$mpg)
 
-data <- list(mpg=logmpg, model.year=cars$model.year, weight = cars$weight, acceleration=cars$acceleration, N=N)
+data <- list(mpg=logmpg, model.year=cars$model.year, horsepower = cars$horsepower, acceleration=cars$acceleration, N=N)
 
 inits <- function(){
 list(alpha=rnorm(1), beta4 = rnorm(1), beta5 = rnorm(1), beta6 = rnorm(1), tau=runif(1,0,2))
 }
 
-parameters <- c("alpha", "beta4", "beta5", "beta6","tau")
+parameters <- c("alpha", "beta1", "beta2", "beta3","tau")
 
 
-sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta4", "beta5", "beta6", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
+sims <- bugs(data=data, inits=inits, parameters.to.save = c("alpha", "beta1", "beta2", "beta3", "tau"), model.file = model, n.chains=1, n.iter=100000, n.burnin=10000)
 
-plot(sims, display.parallel = TRUE)
+print(sims, digits.summary = 5)
 
-b4 <- sims$sims.array[,,"beta4"]
+plot(alpha, type='l', col="red")
 
-plot(b4, type='l', col="red")
+plot(density(alpha), lwd=2, col="red")
 
-plot(density(b4),lwd=2,col="red")
+tau <- sims$sims.array[,,"tau"]
 
-b5 <- sims$sims.array[,,"beta5"]
+plot(tau, type='l', col="red")
 
-plot(b5, type='l', col="red")
+plot(density(tau), lwd=2, col="red")
 
-plot(density(b5),lwd=2,col="red")
+beta1 <- sims$sims.array[,,"beta1"]
 
-b6 <- sims$sims.array[,,"beta6"]
+plot(beta1, type='l', col="red")
 
-plot(b6, type='l', col="red")
+plot(density(beta1),lwd=2,col="red")
 
-plot(density(b6),lwd=2,col="red")
+beta2 <- sims$sims.array[,,"beta2"]
 
+plot(beta2, type='l', col="red")
+
+plot(density(beta2),lwd=2,col="red")
+
+beta3 <- sims$sims.array[,,"beta3"]
+
+plot(beta3, type='l', col="red")
+
+plot(density(beta3),lwd=2,col="red")
 ```
 
 ### Check results using brms
