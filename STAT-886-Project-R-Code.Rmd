@@ -21,7 +21,9 @@ summary(cars)
 
 ## Graphs MPG vs Explanatory variables
 ```{r, plots}
-ggplot(data = cars, aes(x=mpg)) + geom_histogram()
+ggplot(data = cars, aes(x=mpg)) + geom_histogram(fill="lightblue", color="black")
+
+ggplot(data = cars, aes(x=log(mpg))) + geom_histogram(fill="lightblue", color="black")
 
 ggplot(data = cars, aes(x=acceleration, y=mpg)) + geom_point(colour="cyan3") + geom_smooth(methed = lm(data=cars, formula=log(mpg)~acceleration)) + ggtitle("MPG vs. Acceleration")
 
@@ -40,6 +42,8 @@ ggplot(data = cars, aes(x=horsepower, y=mpg)) + geom_point(colour="yellow3") + g
 ## Frequentist models
 
 ```{r, ols models, echo=TRUE}
+cor(cars_no_char)
+
 model_all_linear <- lm(data=cars, mpg ~ cylinders + displacement + horsepower + weight + acceleration + origin + model.year)
 summary(model_all_linear)
 
@@ -134,7 +138,7 @@ plot(b7, type='l', col="red")
 plot(density(b7),lwd=2,col="red")
 ```
 
-## Weight
+## Model 3
 ```{r, echo=TRUE}
 N <- 392
 
@@ -198,7 +202,7 @@ plot(density(beta3),lwd=2,col="red")
 
 ```
 
-## displacement
+## model 2
 ```{r, echo=TRUE}
 N <- 392
 
@@ -261,7 +265,7 @@ plot(density(beta3),lwd=2,col="red")
 
 ```
 
-### horsepower
+### model 13
 
 ```{r, echo=TRUE}
 N <- 392
@@ -329,4 +333,5 @@ best <- brm(data=cars, log(mpg) ~ model.year + weight + acceleration, prior = c(
 summary(best)
 plot(best)
 prior_summary(best)
+print(best, digits = 5)
 ```
